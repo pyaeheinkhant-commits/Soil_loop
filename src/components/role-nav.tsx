@@ -13,7 +13,7 @@ const NAV: Record<Role, { href: string; label: string }[]> = {
     { href: "/resident/impact", label: "Impact" },
   ],
   collector: [
-    { href: "/collector", label: "Today" },
+    { href: "/collector", label: "Collections" },
     { href: "/operator", label: "KPIs" },
   ],
   gardener: [
@@ -40,6 +40,7 @@ export function RoleNav({ role }: { role: Role }) {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={on ? "page" : undefined}
               className={`rounded-full px-3 py-2 text-xs font-semibold ${
                 on ? "bg-leaf-700 text-white" : "text-soil-600"
               }`}

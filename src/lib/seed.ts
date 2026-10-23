@@ -321,6 +321,7 @@ export const SEED: AppState = {
     },
   ],
   champion_issues: [],
+  compost_requests: [],
   community_sites: [
     {
       community_site_id: "COMMUNITY-DEMO-01",
@@ -416,8 +417,8 @@ export const SEED: AppState = {
       id: "tea",
       name: "Tea leaves",
       aliases: ["teh", "tea bag"],
-      verdict: "yes",
-      reason: "Loose tea and plastic-free bags are yes. Plastic tea bags go to general waste.",
+      verdict: "packaging",
+      reason: "Loose tea leaves are accepted. Open the bag and remove plastic, string and staples first; only use a bag if your partner accepts its material.",
     },
     {
       id: "rice",

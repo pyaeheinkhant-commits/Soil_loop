@@ -10,6 +10,7 @@ export function PhoneShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-full bg-[radial-gradient(1200px_circle_at_20%_-10%,#d7e6d2,transparent_45%),radial-gradient(900px_circle_at_110%_10%,#f6d7c4,transparent_40%),#f4efe6]">
       <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-4 pb-24 pt-6">
+        <p className="mb-4 text-center text-[10px] font-semibold uppercase tracking-[0.15em] text-soil-600">Demo programme · sample records · saved in this browser</p>
         {children}
       </div>
     </div>

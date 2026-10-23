@@ -1,10 +1,28 @@
 # Soil Loop
 
+Live demo: [soil-loop.vercel.app](https://soil-loop.vercel.app)
+
 **Soil Loop helps neighbourhoods turn separated food scraps into compost and garden use.** It brings residents, waste collection teams, compost and garden teams, receiving community sites, and waste-source organisations into one mobile-first demonstration app.
 
 The project focuses on showing the full community loop with clear ownership and honest impact reporting. A condo or mall is a **waste source**; a community garden, compost hub, or public drop-off point is a **receiving site**. Those are different roles with different records and dashboards.
 
 > **Project status:** Hackathon MVP. The app uses synthetic Precinct 3 demo data and saves changes in the current browser. It is not a production waste-tracking service.
+
+## Updated version
+
+The requirements review is in [REQUIREMENTS-REVIEW.md](REQUIREMENTS-REVIEW.md). This version adds partial collection acceptance, validated batch creation and quality gates, compost inventory checks, garden requests, operational alerts, and a resident timeline driven by linked collection / batch / garden records. Drop-off hours are separate from pickup hours; full and closed bins cannot accept check-ins. Reports label estimated quantities separately.
+
+Illustrations remain the primary visual style. Garden updates accept real photos and videos with credits and text descriptions. [The media checklist](public/media/README.md) explains the actual assets to supply and how to connect them; no stock or AI photos have been substituted for programme evidence.
+
+```powershell
+npm install
+npm run dev
+npm test
+npm run build
+npm start
+```
+
+Development and production builds use Webpack with the official Tailwind PostCSS adapter. Fonts are bundled locally so builds do not depend on Google Fonts access.
 
 
 

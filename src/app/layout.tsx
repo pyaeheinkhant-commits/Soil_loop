@@ -1,15 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Nunito_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const nunito = Nunito_Sans({
+const nunito = localFont({
+  src: "./fonts/nunito-sans-latin.woff2",
+  weight: "200 1000",
+  display: "swap",
   variable: "--font-nunito",
-  subsets: ["latin"],
 });
 
-const fraunces = Fraunces({
+const fraunces = localFont({
+  src: "./fonts/fraunces-latin.woff2",
+  weight: "100 900",
+  display: "swap",
   variable: "--font-fraunces",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +31,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   themeColor: "#2f5d38",
 };
 

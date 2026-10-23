@@ -55,7 +55,7 @@ export function ConversionBars({
   return (
     <div className="space-y-3">
       {[
-        { label: "Food scraps collected", value: inputKg, color: "bg-clay-500", note: "Accepted scraps weighed before composting" },
+        { label: "Food scraps accepted", value: inputKg, color: "bg-clay-500", note: "Accepted input; see collection records for weighed or estimated amounts" },
         { label: "Finished compost", value: outputKg, color: "bg-leaf-600", note: "Weighed after composting; moisture and material break down" },
         { label: "Compost used in garden", value: usedKg, color: "bg-soil-700", note: "Applied to garden beds" },
       ].map((row) => (
@@ -86,8 +86,7 @@ export function PrecinctFlow({ state }: { state: AppState }) {
       <p className="mb-3 text-sm font-semibold">Honest mass balance</p>
       <ConversionBars inputKg={inKg} outputKg={outKg} usedKg={used} />
       <p className="mt-3 text-xs leading-5 text-soil-500">
-        Composting shrinks weight. 60 kg of scraps in Batch 12 became 15 kg of
-        compost — not 60 kg of soil.
+        Food scraps, finished compost and garden use are recorded separately. Input can include estimated collection weights; finished output is recorded after processing.
       </p>
     </div>
   );
@@ -107,11 +106,12 @@ export function BlockBars({
           <div className="h-6 flex-1 overflow-hidden rounded-full bg-cream-200">
             <div
               className="flex h-full items-center rounded-full bg-leaf-600 px-2 text-[11px] font-semibold text-white"
-              style={{ width: `${Math.max(18, (row.kg / max) * 100)}%` }}
+              style={{ width: `${(row.kg / max) * 100}%`, minWidth: row.kg ? "3rem" : 0 }}
             >
-              {row.kg} kg
+              {row.kg ? `${Number(row.kg.toFixed(3))} kg` : ""}
             </div>
           </div>
+          {row.kg === 0 ? <span className="text-xs">0 kg</span> : null}
         </div>
       ))}
     </div>

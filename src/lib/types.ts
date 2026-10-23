@@ -40,6 +40,7 @@ export interface Block {
   block_name: string;
   precinct: string;
   collection_schedule: string;
+  dropoff_schedule?: string;
   assigned_collector_id: string;
   assigned_compost_site: string;
 }
@@ -118,6 +119,8 @@ export interface Collection {
   collector_id: string;
   collection_datetime: string;
   weight_kg: number;
+  accepted_weight_kg?: number;
+  photo_url?: string;
   weight_method: WeightMethod;
   contamination_status: ContaminationStatus;
   contamination_notes: string;
@@ -157,6 +160,19 @@ export interface CompostUse {
   garden_area: string;
   update_notes: string;
   photo_url: string;
+  video_url?: string;
+  media_credit?: string;
+  video_description?: string;
+  request_id?: string;
+}
+
+export interface CompostRequest {
+  request_id: string;
+  garden_id: string;
+  requested_kg: number;
+  needed_by: string;
+  purpose: string;
+  created_at: string;
 }
 
 export interface ChampionIssue {
@@ -167,6 +183,7 @@ export interface ChampionIssue {
   timestamp: string;
   kind: string;
   notes: string;
+  resolved_at?: string;
 }
 
 export interface WasteItem {
@@ -190,6 +207,7 @@ export interface AppState {
   batches: Batch[];
   gardens: Garden[];
   compost_uses: CompostUse[];
+  compost_requests: CompostRequest[];
   champion_issues: ChampionIssue[];
   waste_items: WasteItem[];
 }

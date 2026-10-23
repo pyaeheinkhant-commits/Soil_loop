@@ -6,6 +6,8 @@ import { RoleNav } from "@/components/role-nav";
 import { Card, Guard, PhoneShell, Pill, TopBar } from "@/components/ui";
 import { LoopDiagram, Pipeline } from "@/components/visuals";
 import { useSoilLoop } from "@/lib/use-soil-loop";
+import { GardenDemand } from "@/components/garden-demand";
+import { ProgrammeMedia } from "@/components/programme-media";
 
 export default function GardenerHome() {
   const { user, state } = useSoilLoop();
@@ -15,6 +17,7 @@ export default function GardenerHome() {
       <PhoneShell>
         <TopBar user={user} title="Compost batches" />
         <LoopDiagram active={3} />
+        <Link href="/gardener/new" className="mt-4 block rounded-2xl border border-leaf-700 p-3 text-center text-sm font-semibold text-leaf-800">+ Start a new batch</Link>
         <div className="mt-4 flex items-center gap-3">
           <CompostMark />
           <p className="text-sm text-soil-600">
@@ -51,6 +54,8 @@ export default function GardenerHome() {
             </Link>
           ))}
         </div>
+        <GardenDemand editable />
+        <ProgrammeMedia stage="compost" />
         {user ? <RoleNav role={user.role} /> : null}
       </PhoneShell>
     </Guard>

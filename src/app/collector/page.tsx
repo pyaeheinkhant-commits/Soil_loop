@@ -7,6 +7,9 @@ import { Card, Guard, PhoneShell, Pill, TopBar } from "@/components/ui";
 import { LoopDiagram } from "@/components/visuals";
 import { contaminationLabel, isAccepted } from "@/lib/metrics";
 import { useSoilLoop } from "@/lib/use-soil-loop";
+import { OperationsNotices } from "@/components/operations-notices";
+import { acceptedKg } from "@/lib/operations";
+import { RealMedia } from "@/components/real-media";
 
 export default function CollectorHome() {
   const { user, state } = useSoilLoop();
@@ -21,7 +24,7 @@ export default function CollectorHome() {
   return (
     <Guard user={user} allow={["collector"]}>
       <PhoneShell>
-        <TopBar user={user} title="Today’s collections" />
+        <TopBar user={user} title="Block collections" />
         <LoopDiagram active={2} />
         <div className="mt-4 flex items-center gap-3">
           <ScaleMark />
@@ -43,10 +46,11 @@ export default function CollectorHome() {
               </div>
               {last ? (
                 <p className="mt-2 text-sm text-soil-600">
-                  Last: {last.weight_kg} kg · {contaminationLabel(last.contamination_status)}
+                  Last: {last.weight_kg} kg collected · {acceptedKg(last)} kg accepted · {last.weight_method === "estimated" ? "Estimated" : "Weighed"} · {contaminationLabel(last.contamination_status)}
                   {isAccepted(last) ? "" : " · not diverted"}
                 </p>
               ) : null}
+              {last?.photo_url ? <details className="mt-2 text-xs"><summary className="cursor-pointer">Collection photo</summary><RealMedia photo={last.photo_url} description={`Collection at ${block.block_name}`} /></details> : null}
               <Link
                 href={`/collector/record/${block.block_id}`}
                 className="mt-3 block rounded-2xl bg-leaf-700 py-2.5 text-center text-sm font-semibold text-white"
@@ -56,6 +60,7 @@ export default function CollectorHome() {
             </Card>
           ))}
         </div>
+        <OperationsNotices />
         {user ? <RoleNav role={user.role} /> : null}
       </PhoneShell>
     </Guard>

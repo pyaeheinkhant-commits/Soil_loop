@@ -36,3 +36,9 @@ body {
 .font-display {
   font-family: var(--font-fraunces), ui-serif, Georgia, serif;
 }
+
+button, a, summary, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled), summary, select { cursor: pointer; }
+:focus-visible { outline: 3px solid #4f8a4a; outline-offset: 3px; }
+button, a { touch-action: manipulation; }
+video, img { max-width: 100%; }

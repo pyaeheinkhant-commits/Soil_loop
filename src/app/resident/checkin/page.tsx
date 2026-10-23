@@ -12,6 +12,8 @@ import { useSoilLoop } from "@/lib/use-soil-loop";
 export default function CheckinPage() {
   const { user, block, bin, state } = useSoilLoop();
   const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
+  const blocked = !bin || ["full", "closed"].includes(bin.status);
   const visits = user ? checkinCount(state, user.user_id) : 0;
 
   return (
@@ -39,14 +41,17 @@ export default function CheckinPage() {
               <p className="mt-3 text-xs text-soil-500">Manual check-in. QR comes later.</p>
               <div className="mt-4">
                 <PrimaryButton
+                  disabled={blocked}
                   onClick={() => {
                     if (!user || !block || !bin) return;
-                    addCheckin(user.user_id, block.block_id, bin.bin_id);
-                    setDone(true);
+                    try { addCheckin(user.user_id, block.block_id, bin.bin_id); setDone(true); }
+                    catch (err) { setError(err instanceof Error ? err.message : "Could not save check-in."); }
                   }}
                 >
                   I dropped off scraps
                 </PrimaryButton>
+                {blocked ? <p className="mt-3 text-sm text-soil-600">This bin is full or closed. Keep scraps chilled until it reopens.</p> : null}
+                {error ? <p role="alert" className="mt-3 text-sm text-red-800">{error}</p> : null}
               </div>
             </>
           )}

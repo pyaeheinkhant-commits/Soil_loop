@@ -24,10 +24,11 @@ export default function SearchPage() {
       <PhoneShell>
         <TopBar user={user} title="Can I compost this?" back="/resident" />
         <p className="mb-3 text-sm text-soil-600">
-          Search {block?.assigned_compost_site}&apos;s list. No photo AI in this demo.
+          These pilot rules apply to {block?.block_name} and {block?.assigned_compost_site}. Your composting partner has the final say.
         </p>
         <input
           className={inputClass}
+          aria-label="Search an item in your block’s compost guide"
           placeholder="Banana peel, oil, bones…"
           value={q}
           onChange={(e) => setQ(e.target.value)}

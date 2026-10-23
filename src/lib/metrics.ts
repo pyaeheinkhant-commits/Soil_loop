@@ -3,6 +3,7 @@ import type {
   Collection,
   ContaminationStatus,
 } from "./types";
+import { acceptedKg } from "./operations";
 
 export function isAccepted(collection: Collection) {
   return (
@@ -14,12 +15,12 @@ export function isAccepted(collection: Collection) {
 export function divertedKg(state: AppState, blockId?: string) {
   return state.collections
     .filter((c) => isAccepted(c) && (!blockId || c.block_id === blockId))
-    .reduce((sum, c) => sum + c.weight_kg, 0);
+    .reduce((sum, c) => sum + acceptedKg(c), 0);
 }
 
 export function compostProducedKg(state: AppState) {
   return state.batches
-    .filter((b) => b.batch_status === "ready" && b.output_compost_kg)
+    .filter((b) => b.batch_status === "ready" && b.quality_status === "passed" && b.output_compost_kg)
     .reduce((sum, b) => sum + (b.output_compost_kg ?? 0), 0);
 }
 

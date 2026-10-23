@@ -4,6 +4,7 @@ import { CompostMark, PeelMark } from "@/components/illustrations";
 import { RoleNav } from "@/components/role-nav";
 import { Card, Guard, PhoneShell, Pill, TopBar } from "@/components/ui";
 import { useSoilLoop } from "@/lib/use-soil-loop";
+import { ProgrammeMedia } from "@/components/programme-media";
 
 function List({
   title,
@@ -87,6 +88,7 @@ export default function RulesPage() {
             </ul>
           </Card>
         </div>
+        <ProgrammeMedia stage="sorting" />
         {user ? <RoleNav role={user.role} /> : null}
       </PhoneShell>
     </Guard>

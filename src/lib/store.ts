@@ -1,6 +1,7 @@
 "use client";
 
 import { cloneSeed } from "./seed";
+import { acceptedKg, requireValid, validateBatch, validateCollection, validateCompostUse, validMediaUrl } from "./operations";
 import type {
   AppState,
   Batch,
@@ -85,6 +86,7 @@ function hydrate(): AppState {
       ...seed,
       ...parsed,
       users,
+      compost_requests: Array.isArray(parsed.compost_requests) ? parsed.compost_requests : [],
       community_sites: communitySites,
       client_sites: Array.isArray(parsed.client_sites)
         ? (parsed.client_sites as ClientSite[])
@@ -103,8 +105,10 @@ export function loadState(): AppState {
 }
 
 export function saveState(state: AppState) {
-  cache = structuredClone(state);
-  localStorage.setItem(KEY, JSON.stringify(cache));
+  const next = structuredClone(state);
+  try { localStorage.setItem(KEY, JSON.stringify(next)); }
+  catch { throw new Error("Could not save in this browser. Try a smaller photo or use a media URL, and check storage permissions."); }
+  cache = next;
   emit();
 }
 
@@ -145,6 +149,10 @@ function nextId(prefix: string) {
 
 export function addCheckin(userId: string, blockId: string, binId: string) {
   const state = structuredClone(loadState());
+  const bin = state.bins.find((b) => b.bin_id === binId && b.block_id === blockId);
+  requireValid(bin && !["full", "closed"].includes(bin.status), "This bin is full or temporarily closed. Please wait for an update.");
+  requireValid(state.users.some((u) => u.user_id === userId && u.role === "resident" && u.block_id === blockId), "Check in at your assigned block bin.");
+  requireValid(!state.checkins.some((c) => c.user_id === userId && c.bin_id === binId && Date.now() - Date.parse(c.timestamp) < 60000), "Your drop-off was already recorded. Please wait before checking in again.");
   state.checkins.push({
     checkin_id: nextId("CHK"),
     user_id: userId,
@@ -162,7 +170,7 @@ export function addCommunityVisit(userId: string, communitySiteId: string) {
   const site = state.community_sites.find(
     (candidate) => candidate.community_site_id === communitySiteId,
   );
-  if (!user || user.role !== "resident" || !site) return null;
+  if (!user || user.role !== "resident" || !site || site.publication_status !== "active") return null;
 
   const visit = {
     visit_id: nextId("VIS"),
@@ -258,15 +266,17 @@ export function updateManagedClientSite(
 
 export function addCollection(input: Omit<Collection, "collection_id">) {
   const state = structuredClone(loadState());
+  validateCollection(state, input);
+  requireValid(validMediaUrl(input.photo_url ?? "", true), "Use an HTTPS photo URL or a local image.");
   const collection: Collection = {
     ...input,
     collection_id: nextId("COL"),
   };
   state.collections.push(collection);
-  if (collection.batch_id && collection.contamination_status !== "rejected") {
+  if (collection.batch_id && acceptedKg(collection) > 0) {
     const batch = state.batches.find((b) => b.batch_id === collection.batch_id);
     if (batch) {
-      batch.input_weight_kg += collection.weight_kg;
+      batch.input_weight_kg = Math.round((batch.input_weight_kg + acceptedKg(collection)) * 1000) / 1000;
       if (!batch.source_block_ids.includes(collection.block_id)) {
         batch.source_block_ids.push(collection.block_id);
       }
@@ -280,13 +290,41 @@ export function updateBatch(batchId: string, patch: Partial<Batch>) {
   const state = structuredClone(loadState());
   const batch = state.batches.find((b) => b.batch_id === batchId);
   if (!batch) return;
-  Object.assign(batch, patch);
+  const next = { ...batch, ...patch, batch_id: batch.batch_id, input_weight_kg: batch.input_weight_kg, source_block_ids: batch.source_block_ids };
+  validateBatch(state, next);
+  Object.assign(batch, next);
   saveState(state);
 }
 
 export function addCompostUse(input: Omit<CompostUse, "use_id">) {
   const state = structuredClone(loadState());
+  validateCompostUse(state, input);
   state.compost_uses.push({ ...input, use_id: nextId("USE") });
+  saveState(state);
+}
+
+export function createBatch(input: Pick<Batch, "compost_site" | "start_date" | "expected_ready_date" | "composting_method">) {
+  const state = structuredClone(loadState());
+  const batch: Batch = { ...input, batch_id: nextId("BATCH"), input_weight_kg: 0, source_block_ids: [], actual_ready_date: null, output_compost_kg: null, quality_status: "pending", quality_notes: "", batch_status: "received" };
+  validateBatch(state, batch);
+  state.batches.push(batch);
+  saveState(state);
+  return batch;
+}
+
+export function requestCompost(input: { garden_id: string; requested_kg: number; needed_by: string; purpose: string }) {
+  const state = structuredClone(loadState());
+  requireValid(state.gardens.some((g) => g.garden_id === input.garden_id), "Choose a garden.");
+  requireValid(Number.isFinite(input.requested_kg) && input.requested_kg > 0, "Enter a requested quantity above zero.");
+  requireValid(Number.isFinite(Date.parse(input.needed_by)) && input.purpose.trim(), "Add a needed-by date and purpose.");
+  state.compost_requests.push({ ...input, request_id: nextId("DEMAND"), created_at: new Date().toISOString() });
+  saveState(state);
+}
+
+export function resolveIssue(issueId: string) {
+  const state = structuredClone(loadState());
+  const issue = state.champion_issues.find((i) => i.issue_id === issueId);
+  if (issue) issue.resolved_at = new Date().toISOString();
   saveState(state);
 }
 
@@ -306,8 +344,10 @@ export function addChampionIssue(input: {
   notes: string;
 }) {
   const state = structuredClone(loadState());
+  requireValid(input.notes.trim(), "Add a short note about the issue or cleaning action.");
   state.champion_issues.push({
     ...input,
+    ...(input.kind === "cleaning" ? { resolved_at: new Date().toISOString() } : {}),
     issue_id: nextId("ISS"),
     timestamp: new Date().toISOString(),
   });
