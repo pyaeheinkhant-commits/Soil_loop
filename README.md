@@ -2,6 +2,8 @@
 
 Live demo: [soil-loop.vercel.app](https://soil-loop.vercel.app)
 
+youtube persentation video: https://youtu.be/ApsZJOAlGe0
+
 **Soil Loop helps neighbourhoods turn separated food scraps into compost and garden use.** It brings residents, waste collection teams, compost and garden teams, receiving community sites, and waste-source organisations into one mobile-first demonstration app.
 
 The project focuses on showing the full community loop with clear ownership and honest impact reporting. A condo or mall is a **waste source**; a community garden, compost hub, or public drop-off point is a **receiving site**. Those are different roles with different records and dashboards.
