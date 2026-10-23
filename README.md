@@ -86,7 +86,7 @@ The app has separate site concepts: **client sites** (where scraps originate) an
 - **Browser-local persistence:** changes are stored in `localStorage` under `soilloop-demo-v1`. They persist across refreshes in that browser profile, but are not shared with other devices or users.
 - **Synthetic content:** sample community sites and seeded people, blocks, collections, batches, and garden records are for demonstration. They are not a verified directory or live service.
 - **No production authentication:** the role-picker accounts and password are demo credentials. Do not use real personal or operational data.
-- **No live backend:** the active application uses seeded TypeScript data and a browser-local store. SQL files under `supabase/` are database scaffolding; this demo does not sync to Supabase.
+- **No live backend:** the application uses seeded TypeScript data and a browser-local store. No database credentials are needed to run the demo.
 - **No inferred resident weight:** resident participation is represented by check-in or visit counts. Kilograms come from collection and batch records, not from a resident's visit.
 - **Manual site search:** area text search only; no GPS, map, or real-distance calculation.
 - **Single seeded programme:** existing Block A/B/C, collection, batch, and garden data remain part of the demo alongside the community-site features.
@@ -117,7 +117,6 @@ web/
 │   ├── app/              # Next.js routes and page layouts for each role
 │   ├── components/       # Shared UI, navigation, and illustrations
 │   └── lib/              # Types, seed data, local store, metrics, site options
-├── supabase/             # Optional SQL schema and seed scaffolding (not connected)
 ├── package.json
 └── README.md
 ```
