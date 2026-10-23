@@ -1,69 +1,108 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { HeroLoopScene } from "@/components/illustrations";
+import { LoopDiagram } from "@/components/visuals";
+import { Card, PhoneShell, PrimaryButton, inputClass } from "@/components/ui";
+import { cloneSeed } from "@/lib/seed";
+import { loginAs, loginWith } from "@/lib/use-soil-loop";
+import { resetState } from "@/lib/store";
+import type { Role } from "@/lib/types";
+
+const DEMOS: { role: Role; email: string; blurb: string; label?: string }[] = [
+  { role: "resident", email: "resident@soilloop.demo", blurb: "Rules, check-in, block impact" },
+  { role: "collector", email: "collector@soilloop.demo", blurb: "Weigh, contamination, batch" },
+  { role: "gardener", email: "gardener@soilloop.demo", blurb: "Batch lifecycle and garden use" },
+  { role: "operator", email: "operator@soilloop.demo", blurb: "Precinct KPIs" },
+  { role: "site_manager", label: "Site Manager", email: "condo.manager@soilloop.demo", blurb: "Collection schedule and participating groups" },
+  { role: "champion", email: "champion@soilloop.demo", blurb: "Bin status (optional extra)" },
+];
+
+export default function LoginPage() {
+  const router = useRouter();
+  const users = cloneSeed().users;
+  const [email, setEmail] = useState("resident@soilloop.demo");
+  const [password, setPassword] = useState("demo123");
+  const [error, setError] = useState("");
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <PhoneShell>
+      <h1 className="mt-2 font-display text-4xl leading-none text-soil-900">
+        Neighbourhood Soil Loop
+      </h1>
+      <div className="mt-5 overflow-hidden rounded-3xl">
+        <HeroLoopScene />
+      </div>
+      <div className="mt-4">
+        <LoopDiagram />
+      </div>
+
+      <Card className="mt-5 space-y-3">
+        <p className="text-sm font-semibold">Demo accounts — password demo123</p>
+        {DEMOS.map((demo) => {
+          const user = users.find((u) => u.email === demo.email);
+          return (
+            <button
+              key={demo.email}
+              type="button"
+              onClick={() => {
+                if (!user) return;
+                router.push(loginAs(user));
+              }}
+              className="flex w-full items-start justify-between rounded-2xl bg-cream-100 px-3 py-3 text-left"
+            >
+              <span>
+                <span className="block text-sm font-semibold capitalize">{demo.label ?? demo.role.replaceAll("_", " ")}</span>
+                <span className="text-xs text-soil-500">{demo.email}</span>
+              </span>
+              <span className="max-w-[45%] text-right text-[11px] text-soil-500">
+                {demo.blurb}
+              </span>
+            </button>
+          );
+        })}
+      </Card>
+
+      <Card className="mt-4 space-y-3">
+        <p className="text-sm font-semibold">Or type a login</p>
+        <input
+          className={inputClass}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="username"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <input
+          className={inputClass}
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+        />
+        {error ? <p className="text-xs text-clay-500">{error}</p> : null}
+        <PrimaryButton
+          onClick={() => {
+            const result = loginWith(email, password);
+            if (!result) {
+              setError("Unknown demo account.");
+              return;
+            }
+            router.push(result.href);
+          }}
+        >
+          Enter the loop
+        </PrimaryButton>
+        <button
+          type="button"
+          className="w-full text-xs text-soil-500"
+          onClick={() => {
+            resetState();
+            setError("");
+          }}
+        >
+          Reset synthetic demo data
+        </button>
+      </Card>
+    </PhoneShell>
   );
 }

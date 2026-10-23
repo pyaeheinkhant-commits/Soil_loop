@@ -1,0 +1,9 @@
+{
+  "name": "Neighbourhood Soil Loop",
+  "short_name": "Soil Loop",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4efe6",
+  "theme_color": "#2f5d38",
+  "description": "Trace food scraps from the block bin to compost to the community garden."
+}
